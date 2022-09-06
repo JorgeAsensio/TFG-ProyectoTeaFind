@@ -1,0 +1,454 @@
+<div class="container">
+	
+	<div class="row d-flex justify-content-between mb-4">
+		<div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+			<h1 class="font-weight-light"><th:block th:text="|Gestionar ${proyecto.nombre}|"></h1>
+		</div>
+		
+		<div class="d-flex justify-content-end align-self-center col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
+			<a type="button" class="btn btn-outline-primary btn-sm border-0 mr-2 botonEdicion" data-toggle="modal" data-target="#newPuestoModal" th:href="|/puesto/c?nombreProyecto=${proyecto.nombre}|" hidden="hidden">
+				<i class="bi bi-plus-square"></i> 
+				 Crear puesto
+			</a>
+
+			<!-- ******************************** Modal para creación de puesto ********************************-->
+			<div class="modal fade text-left" id="newPuestoModal" style="background:transparent;backdrop-filter: blur(3px);" tabindex="-1" role="dialog" aria-labelledby="newPuestoModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title font-weight-bold" id="modalPuestoLibreLabel"
+								th:text="|Nuevo puesto para ${proyecto.nombre}|"></h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<form name="puestoForm" action="/project/work/new" method="POST">
+							<div class="modal-body">
+			
+								<div class="form-group">
+									<label for="recipient-name" class="col-form-label">Nombre del puesto:</label>
+									<input type="text" class="form-control" name="nombre" id="recipient-name" placeholder="Nombre">
+								</div>
+								<div class="form-group">
+									<label for="message-text" class="col-form-label">Descripción del puesto:</label>
+									<textarea class="form-control" name="descripcion" id="message-text"
+										text="Descripción"></textarea>
+								</div>
+								<div class="form-group">
+									<label for="message-text" class="col-form-label">¿Qué habilidades necesita su ocupante?</label>
+								</div>
+								<div class="row mx-2 mt-0 pt-0">
+									<th:block th:each="habilidad : ${habilidades}">
+										<div class="col-4" data-toggle="buttons">
+											<label class="btn btn-info btn-sm">
+												<input type="checkbox" class="custom-control-input" name="idsHabilidadesRequire[]"
+													th:value="${habilidad.id}" th:id="|id-${habilidad.id}-habilidad|" />
+												<th:block th:text="${habilidad.nombre}" />
+											</label>
+										</div>
+									</th:block>
+								</div>
+							</div>
+								
+							<div class="modal-footer">
+								<div>
+									<button type="button" class="btn btn-sm btn-outline-secondary border-0" data-dismiss="modal">Cancelar</button>
+									<button type="button" class="btn btn-sm btn-outline-primary border-0" onclick="crearMasPuestos(true)" value="finalizar">Añadir más</button>
+									<button type="button" class="btn btn-sm btn-outline-success border-0" onclick="crearMasPuestos(false)" value="añadir">Crear y finalizar</button>
+									<input type="hidden" name="idProyecto" th:value="${proyecto.id}" />
+									<input type="hidden" name="nombreProyecto" th:value="${proyecto.nombre}"/>
+									<input type="hidden" name="destino" value="" />
+								</div>
+							</div>
+						</form>
+					</div>
+			
+				</div>
+			</div>
+			<!--******************************* END Modal para creación de puesto *******************************-->
+			
+			<div>
+				<button type="submit" th:if="${!proyecto.isEnded()}" class="btn btn-outline-warning btn-sm border-0 mr-2 botonModoEdicion" onclick="edicionGestionProyecto();">
+					<i class="bi bi-pencil"></i>
+					 Editar proyecto
+				</button>
+				<button type="submit" class="btn btn-outline-danger btn-sm border-0 mr-2 botonModoEdicion" onclick="edicionGestionProyecto();" hidden="hidden">
+					<i class="bi bi-x-circle"></i>
+					 Cancelar edición
+				</button>
+			</div>
+			<form th:if="${proyecto.isEnded()}" action="/project/delete" method="POST">
+				<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+				<button type="submit" class="btn btn-outline-danger btn-sm border-0 mr-2">
+					<i class="bi bi-radioactive"></i> Eliminar proyecto
+				</button>
+			</form>
+			<form action="/project/view">
+				<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+				<button type="submit" class="btn btn-outline-success btn-sm border-0 mr-2">
+					<i class="bi bi-eye"></i>
+					 Ver proyecto
+				</button>
+			</form>
+			<form action="/user/projects">
+				<button type="submit" class="btn btn-outline-info btn-sm border-0">
+					<i class="bi bi-arrow-left"></i>
+					 Mis Proyectos
+				</button>
+			</form>
+		</div>
+	</div>
+	
+</div>
+
+<div class="container pt-4 px-4">
+
+	<form action="/project/manage" method="POST">
+		<!--************** Información general del proyecto **************-->
+		<div class="row mb-3 px-3">
+			<div class="col-6">
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="nombreP" class="font-weight-bold">Nombre del proyecto: </label>
+						<input type="text" name="nombre" id="nombreP"
+							class="form-control disabled bg-light border-0 inputEdicionProyecto"
+							th:value="${proyecto.nombre}" disabled="disabled">
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="inicioP" class="font-weight-bold">Fecha de inicio: </label>
+						<input type="date" name="fIni" id="InicioP"
+							class="form-control disabled bg-light border-0 inputEdicionProyecto"
+							th:value="${proyecto.inicio}" disabled="disabled">
+					</div>
+					<div class="form-group col-md-6">
+						<label for="finP" class="font-weight-bold">Fecha de fin: </label>
+						<input type="date" name="fFin" id="finP"
+							class="form-control disabled bg-light border-0 inputEdicionProyecto"
+							th:value="${proyecto.fin}" disabled="disabled">
+					</div>
+				</div>
+			</div>
+
+			<div class="col-6">
+				<div class="form-row">
+					<div class="form-group col">
+						<label id="textareaVerProyecto" for="descripcionP" class="font-weight-bold">Descripción del proyecto: </label>
+						<textarea th:text="${proyecto.descripcion}" name="descripcion"
+							class="form-control disabled bg-light border-0 inputEdicionProyecto" rows="3"
+							disabled="disabled"></textarea>
+						<!--<input type="text" name="descripcion" id="descripcionP" class="form-control hiddenInputProyecto" th:value="${proyecto.descripcion}">-->
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="form-group col">
+						<div class="d-flex justify-content-between">
+							<div>
+								<input type="hidden" name="idProyecto" th:value="${proyecto.id}" />
+								<input type="submit" value="Guardar cambios"
+									class="btn btn-sm btn-outline-success border-0 mr-1 botonEdicion" hidden="hidden" />
+								<input type="button" value="Cancelar"
+									class="btn btn-sm btn-outline-danger border-0 botonEdicion"
+									onclick="edicionGestionProyecto();" hidden="hidden" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+		
+	<!--**************NINGÚN PUESTO CREADO*********************-->
+	<div class="row py-3" th:if="${libres == 0 && ocupados == 0}">
+		<div class="container px-lg-5">
+	    	<div class="jumbotron p-3 p-lg-5 text-center sinPuestos">
+	            <div class="m-3 m-lg-4">
+	                <h1 class="display-5 fw-bold" th:text="|${session.usuario?.nombre}, tu proyecto no tiene puestos creados...|"></h1>
+	                <p class="fs-4" th:text="|Para que se una gente a ${proyecto.nombre} debes crear, al menos, uno nuevo.|"></p>
+	                <p class="lead">Habilita más arriba el modo de edición y pulsa en <span class="text-info"><i class="bi bi-plus-square"></i> Crear puesto</span> para empezar a ampliar tu proyecto ahora mismo.</p>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!--*******************************************************-->
+		
+	<div class="row">
+		<!--************** Cards puestos ocupados **************-->
+		<div th:unless="${libres == 0 && ocupados == 0}" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+			<div class="">
+				<div>
+					<h3 class="font-weight-light pl-3">Tu equipo:</h3>
+				</div>
+			</div>
+			<hr class="mb-4">
+		
+			<div class="mx-3 mb-3">
+		
+				<!-- Mensaje mostrado al no haber puestos ocupados en el equipo -->
+				<h5 th:if="${ocupados == 0}" class="display-5 list-group-item-warning rounded text-center p-3 mt-5">
+					Por ahora nadie forma parte de tu equipo. Aquí podrás ver los puestos ocupados más adelante.
+				</h5>
+				<!--************************************************************-->
+		
+				<th:block th:each="puesto : ${proyecto.puestos}" class="mx-3">
+					<div th:if="${puesto.ocupante != null}" class="card escalar text-center my-3 mx-3">
+						<div class="card-body">
+		
+							<!-- POPUP de edición de puesto OCUPADO desde su propia card -->
+		
+							<button type="button" class="btn btn-outline-info btn-sm float-right border-0 botonEdicion ml-2" data-toggle="modal" th:attr="data-target='#modalPuestoOcupado-'+${puesto.id}" title="Modificar puesto ocupado" hidden="hidden">
+								<i class="bi bi-pencil-square"></i>
+							</button>
+		
+							<div class="modal fade text-left" th:id="|modalPuestoOcupado-${puesto.id}|" tabindex="-1" role="dialog" aria-labelledby="modalPuestoOcupadoLabel" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title font-weight-bold" id="modalPuestoOcupadoLabel" th:text="|Estás modificando el puesto de ${puesto.ocupante.nombre}: '${puesto.nombre}'|">
+											</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<form action="/project/work/edit" method="POST" th:id="|puestoOcupadoForm-${puesto.id}|">
+												<input type="hidden" name="idPuesto" th:value="${puesto.id}"/>
+												<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+												<div class="form-group">
+													<label for="recipient-name" class="col-form-label">Modifica el nombre del puesto:</label>
+													<input type="text" class="form-control" id="recipient-name" th:placeholder="${puesto.nombre}" th:value="${puesto.nombre}" name="nombre"/>
+												</div>
+												<div class="form-group">
+													<label for="message-text" class="col-form-label">Nueva descripción del puesto:</label>
+													<textarea class="form-control" id="message-text" th:text="${puesto.descripcion}" th:placeholder="${puesto.descripcion}" name="descripcion"/>
+												</div>
+												<div class="form-group list-group-item-warning rounded p-2">
+													<span for="message-text" class="col-form-label disabled font-weight-light">
+														Para modificar las
+														habilidades necesarias para este puesto, debe estar desocupado. Por
+														favor, crea uno nuevo o despide a la persona que lo ocupa.
+													</span>
+												</div>
+											</form>
+										</div>
+										<div class="modal-footer d-flex justify-content-between">
+											<a th:href="|#modalDespedirUser-${puesto.id}|" class="trigger-btn btn btn-sm btn-outline-danger border-0" data-toggle="modal">
+												<i class="bi bi-trash3 tx-bad mr-2"></i> Despedir ocupante
+											</a>
+
+											<!-- Modal para DESPEDIR USUARIO -->
+											<div th:id="|modalDespedirUser-${puesto.id}|" class="modal fade">
+												<div class="modal-dialog modal-confirm">
+													<div class="modal-content">
+														<div class="modal-header">
+															<div class="icon-box align-self-center tx-bad mr-2">
+																<i class="bi bi-exclamation-octagon"></i>
+															</div>						
+															<h4 class="modal-title w-100">Estás a punto de borrar tu cuenta</h4>	
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<p>¿Quieres despedir a <span th:text="${puesto.ocupante.nombre}"></span>? El puesto quedará libre y podrá volver a ser ocupado. </p>
+														</div>
+														<div class="modal-footer justify-content-center">
+															<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+															<form class="text-right" action="/project/user/dismiss" method="POST">
+																<input type="hidden" name="idPuesto" th:value="${puesto.id}"/>
+																<button type="submit"  class="btn btn-outline-danger btn-sm">
+																	<i class="bi bi-radioactive"></i> Sí, eliminar
+																</button>	
+															</form>
+														</div>
+													</div>
+												</div>
+											</div> 
+
+											<div>
+												<button type="button" class="btn btn-sm btn-outline-secondary border-0" data-dismiss="modal">Cancelar</button>
+												<button type="button" class="btn btn-sm btn-outline-info border-0" th:onclick="|document.getElementById('puestoOcupadoForm-${puesto.id}').submit()|">Guardar cambios</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- FIN POPUP de edición de puesto desde su propia card -->
+
+							<img class="imagenNavbar float-right" th:src="|/img/profile/${puesto.ocupante.imagen}|" th:alt="${puesto.ocupante.nombre}" th:title="${puesto.ocupante.nombre}">
+							<h5 class="card-title text-left font-weight-bold" th:text="${puesto.nombre}"></h5>
+							<p class="card-text text-left"
+								th:text="|${puesto.ocupante.nombre} ${puesto.ocupante.apellido1} ${puesto.ocupante.apellido2}|">
+							</p>
+							<p class="card-text" th:text="${puesto.descripcion}"></p>
+						</div>
+						<div class="d-inline text-right pb-2 px-2">
+							<span th:each="habilidad : ${puesto.requiere}" th:text="${habilidad.nombre}"class="badge badge-pill badge-primary mx-1"></span>
+						</div>
+					</div>
+				</th:block>
+			</div>
+		</div>
+		
+		
+		<div th:unless="${libres == 0 && ocupados == 0}" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+			<div>
+				<h3 class="font-weight-light pl-3">Los puestos libres:</h3> 
+			</div>
+			<hr class="mb-4">
+		
+			<div class="mx-3 mb-3">
+			
+				<!-- Mensaje mostrado al no haber puestos ocupados en el equipo -->
+				<h5 th:if="${libres == 0 && ocupados > 0}" class="display-5 list-group-item-warning rounded text-center p-3 mt-5">
+					Actualmente no queda ningún puesto libre en el proyecto. ¡Crea uno nuevo si necesitas más gente en el equipo!
+				</h5>
+				
+				<!--************************************************************-->
+				
+				<!--************** Cards puestos libres **************-->
+				
+				<th:block th:each="puesto : ${proyecto.puestos}" class="mx-3" id="bloquePuestosLibres">
+					<div class="rowCardPuestoLibre">
+						<div th:if="${puesto.ocupante == null}" class="card escalar text-center my-3 mx-3">
+							<div class="card-body">
+								<button type="button" class="btn btn-outline-info btn-sm float-right border-0 botonEdicion" data-toggle="modal" th:attr="data-target='#modalPuestoLibre-'+${puesto.id}" title="Modificar puesto libre" hidden="hidden">
+									<i class="bi bi-pencil-square"></i>
+								</button>
+								
+								<!-- POPUP de edición de puesto LIBRE desde su propia card -->
+								<div class="modal fade text-left" th:id="|modalPuestoLibre-${puesto.id}|" tabindex="-1" role="dialog" aria-labelledby="modalPuestoLibreLabel" aria-hidden="true">
+									
+									<div class="modal-dialog modal-dialog-centered" role="document">
+										<div class="modal-content">
+											<form method="post" action="/project/work/edit" th:id="|puestoLibreForm-${puesto.id}|">
+												<div class="modal-header">
+									        		<h5 class="modal-title font-weight-bold" id="modalPuestoLibreLabel" th:text="${puesto.nombre}"></h5>
+									        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									          			<span aria-hidden="true">&times;</span>
+									        		</button>
+									      		</div>
+									      		<div class="modal-body">
+								          			<div class="form-group">
+								            			<label for="recipient-name" class="form-label">Modifica el nombre del puesto:</label>
+								            			<input type="text" class="form-control" id="recipient-name" th:value="${puesto.nombre}" th:placeholder="${puesto.nombre}" name="nombre"/>
+								          			</div>
+								          			<div class="form-group">
+								            			<label for="message-text" class="col-form-label">Nueva descripción del puesto:</label>
+								            			<textarea class="form-control" id="message-text" th:text="${puesto.descripcion}" th:placeholder="${puesto.descripcion}" name="descripcion"></textarea>
+								          			</div>
+								          			<div class="form-group">
+								            			<label for="message-text" class="col-form-label">Reasigna las habilidades necesarias:</label>
+								          			</div>
+								            		<div class="row mx-2 mt-0 pt-0">
+														<th:block th:each="habilidad : ${habilidades}">
+															<div class="col-4" data-toggle="buttons">
+																<label class="btn btn-info btn-sm">
+																	<input th:if="${puesto.requiere.contains(habilidad)}" checked="checked" type="checkbox" class="custom-control-input" name="idsHabilidadesRequiere[]" th:value="${habilidad.id}" th:id="|id-${habilidad.id}-habilidad|"/>
+																	<input th:if="${!puesto.requiere.contains(habilidad)}" type="checkbox" class="custom-control-input" name="idsHabilidadesRequiere[]" th:value="${habilidad.id}" th:id="|id-${habilidad.id}-habilidad|"/>
+																	<th:block th:text="${habilidad.nombre}"/>
+																</label>
+															</div>
+														</th:block>
+								          			</div>
+									      		</div>
+									      		<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+												<input type="hidden" name="idPuesto" th:value="${puesto.id}"/>
+											</form>
+								      		<div class="modal-footer d-flex justify-content-between">
+												<a th:href="|#modalEliminarPuesto-${puesto.id}|" class="trigger-btn btn btn-sm btn-outline-danger border-0" data-toggle="modal">
+													<i class="bi bi-trash3 tx-bad mr-2"></i> Eliminar puesto
+												</a>
+
+												<!-- Modal para ELIMINAR PUESTO -->
+												<div th:id="|modalEliminarPuesto-${puesto.id}|" class="modal fade">
+													<div class="modal-dialog modal-confirm">
+														<div class="modal-content">
+															<div class="modal-header">
+																<div class="icon-box align-self-center tx-bad mr-2">
+																	<i class="bi bi-exclamation-octagon"></i>
+																</div>						
+																<h4 class="modal-title w-100">Estás a punto de eliminar un puesto</h4>	
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																	<span aria-hidden="true">&times;</span>
+																</button>
+															</div>
+															<div class="modal-body">
+																<p>¿Quieres eliminar el puesto libre de <span th:text="${puesto.nombre}"></span>? Tendrás que volver a crearlo más adelante si vuelves a necesitarlo.</p>
+															</div>
+															<div class="modal-footer justify-content-center">
+																<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+																<form class="text-right" action="/project/work/delete" method="POST">
+																	<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+								      								<input type="hidden" name="idPuesto" th:value="${puesto.id}"/>
+																	<button type="submit"  class="btn btn-outline-danger btn-sm">
+																		<i class="bi bi-radioactive"></i> Sí, eliminar
+																	</button>	
+																</form>
+															</div>
+														</div>
+													</div>
+												</div>
+
+										      	<div>
+										      		<button type="button" class="btn btn-sm btn-outline-secondary border-0" data-dismiss="modal">Cancelar</button>
+										        	<button type="submit" class="btn btn-sm btn-outline-info border-0" th:onclick="|document.getElementById('puestoLibreForm-${puesto.id}').submit()|">Guardar cambios</button>
+										      	</div>
+								      		</div>
+								    	</div>
+									</div>
+								</div>
+						  	
+							    <h5 th:text="${puesto.nombre}" class="card-title text-left font-weight-bold"></h5>
+							    <!--<h6 class="card-subtitle mb-2 text-muted"></h6>-->
+							    <p th:text="${puesto.descripcion}" class="card-text"></p>
+							    <div class="d-inline pb-1 px-1 text-right">
+							    	<span th:each="habilidad : ${puesto.requiere}" th:text="${habilidad.nombre}" class="badge badge-pill badge-primary m-1"></span>
+							    </div>
+							</div>
+						</div>
+					</div>
+				</th:block>
+			</div>
+		</div>
+	</div>
+	<div class="row d-flex justify-content-end mt-3 mr-3">
+		<a th:href="|#modalEliminarProyecto|" class="trigger-btn btn btn-outline-danger btn-sm mr-2 botonEdicion" data-toggle="modal" hidden="hidden">
+			<i class="bi bi-trash3 tx-bad"></i> Eliminar proyecto
+		</a>
+	</div>
+
+	<!-- Modal para ELIMINAR PROYECTO -->
+	<div id="modalEliminarProyecto" class="modal fade">
+		<div class="modal-dialog modal-confirm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<div class="icon-box align-self-center tx-bad mr-2">
+						<i class="bi bi-exclamation-octagon"></i>
+					</div>						
+					<h4 class="modal-title w-100">Estás a punto de eliminar tu proyecto</h4>	
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>¿Quieres eliminar tu proyecto <span th:text="${proyecto.nombre}"></span>? Sus usuarios serán despedidos y se eliminará todo rastro del proyecto sin poder volver a acceder a sus datos. </p>
+				</div>
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+					<form class="text-right" action="/project/delete" method="POST">
+						<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+						<button type="submit"  class="btn btn-outline-danger btn-sm">
+							<i class="bi bi-radioactive"></i> Sí, eliminar
+						</button>	
+					</form>
+				</div>
+			</div>
+		</div>
+	</div> 
+
+</div>
+<script src="/js/edicionGestionProyectos.js"></script>
+<script src="/js/crearPuestos.js"></script>

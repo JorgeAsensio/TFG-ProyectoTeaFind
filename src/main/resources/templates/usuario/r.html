@@ -1,0 +1,91 @@
+<div class="container">
+	
+	<div class="row d-flex justify-content-between mb-4">
+		<h1 class="font-weight-light">Usuarios registrados</h1>
+		<span class="rounded tx-blanco bgc-bad align-self-center px-2">Admin</span>
+	</div>
+	
+</div>
+
+<div class="container p-4">
+	<table class="table align-middle mb-0 table-hover table-responsive-md">
+		<thead class="tx-off bgc-main-dark">
+			<tr>
+				<th>Usuario</th>
+				<th>Descripción</th>
+				<th>Estado</th>
+				<th>Lidera</th>
+				<th>Ocupa</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="usuario : ${usuarios}">
+				<td>
+					<div class="d-flex align-items-center">
+						<img th:src="|/img/profile/${usuario.imagen}|" alt="|Foto de ${usuario.nick}|" class="rounded-circle imgUsersView mr-3" />
+						<div class="ms-3">
+							<p><span th:if="${usuario.admin}" class="rounded tx-blanco bgc-bad align-self-center px-2 mr-2">Admin</span><span th:text="|${usuario.nombre} ${usuario.apellido1} ${usuario.apellido2}|" class="font-weight-bold mb-1"></span></p>
+							<p th:text="|${usuario.nick} - ${usuario.email}|" class="text-muted mb-0"></p>
+						</div>
+					</div>
+				</td>
+				<td class="align-middle">
+					<p th:text="${usuario.descripcion}" class="mb-1"></p>
+				</td>
+				<td class="align-middle">
+					<span th:text="${usuario.verified ? 'Verificado' : 'No verificado'}" th:class="${usuario.verified ? 'badge badge-success bgc-good rounded-pill d-inline' : 'badge badge-alert tx-blanco bgc-bad rounded-pill d-inline'}"></span>
+				</td>
+				<td class="align-middle" th:text="|${usuario.creados.size} proyectos|"></td>
+				<td class="align-middle" th:text="|${usuario.ocupa.size} proyectos|"></td>
+				<td class="d-flex justify-content-center align-middle">
+					<form th:if="${usuario.admin}" class="text-right" action="/admin/users/user/makeAdmin" method="POST">
+						<input type="hidden" name="idUsuario" th:value="${usuario.id}"/>
+						<button type="submit"  class="btn btn-link btn-sm btn-rounded tx-bad" title="Quitar ADMIN">
+							<i class="bi bi-person-x"></i>
+						</button>	
+					</form>
+					<form th:if="${!usuario.admin}" class="text-right" action="/admin/users/user/makeAdmin" method="POST">
+						<input type="hidden" name="idUsuario" th:value="${usuario.id}"/>
+						<button type="submit"  class="btn btn-link btn-sm btn-rounded tx-main" title="Hacer ADMIN">
+							<i class="bi bi-person-check"></i>
+						</button>	
+					</form>
+					<a th:href="|#modalEliminarUserAdmin-${usuario.id}|" class="trigger-btn btn btn-sm mr-3" data-toggle="modal">
+						<i class="bi bi-trash3 tx-bad"></i>
+					</a>
+
+					<!-- Modal para ELIMINAR USUARIO -->
+					<div th:id="|modalEliminarUserAdmin-${usuario.id}|" class="modal fade">
+						<div class="modal-dialog modal-confirm">
+							<div class="modal-content">
+								<div class="modal-header">
+									<div class="icon-box align-self-center tx-bad mr-2">
+										<i class="bi bi-exclamation-octagon"></i>
+									</div>						
+									<h4 class="modal-title w-100">Estás a punto de eliminar un usuario</h4>	
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p>¿Estás seguro de que quieres eliminar la cuenta de Teafind de <span th:text="${usuario.nick}"></span>? No podrá volver a acceder y sus proyectos se cerrarán y no podrán ser gestionados. </p>
+								</div>
+								<div class="modal-footer justify-content-center">
+									<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+									<form class="text-right" action="/user/delete" method="POST">
+										<input type="hidden" name="idUsuario" th:value="${usuario.id}"/>
+										<button type="submit"  class="btn btn-outline-danger btn-sm">
+											<i class="bi bi-radioactive"></i> Sí, eliminar
+										</button>	
+									</form>
+								</div>
+							</div>
+						</div>
+					</div> 
+
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

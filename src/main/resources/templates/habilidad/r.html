@@ -1,0 +1,164 @@
+<div class="container">
+	
+	<div class="row d-flex justify-content-between mb-4">
+		<div class="col-xl-7 col-lg-6 col-md-12 col-sm-12 col-12">
+			<h1 class="font-weight-light">Habilidades</h1>
+		</div>
+		
+		<div class="d-flex justify-content-end align-self-center col-xl-5 col-lg-6 col-md-12 col-sm-12 col-12">
+			<button type="submit" class="btn btn-outline-info btn-sm border-0 mr-2" data-toggle="modal" data-target="#newHabilidadModal">
+				<i class="bi bi-plus-square"></i>
+				 Crear habilidad
+			</button>
+
+			<!--****************************Modal NUEVA HABILIDAD****************************-->
+			<div class="modal fade text-left" id="newHabilidadModal" tabindex="-1" role="dialog" aria-labelledby="newHabilidadModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title font-weight-bold" id="modalHabilidadLibreLabel">Crear nueva habilidad</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<form name="habilidadForm" action="/hability/new" method="POST">
+							<div class="modal-body">
+			
+								<div class="form-group">
+									<label for="recipient-name" class="col-form-label">Nombre de la habilidad:</label>
+									<input type="text" class="form-control" name="nombre" id="recipient-name" placeholder="Nombre">
+								</div>
+								<div class="form-group">
+									<label for="message-text" class="col-form-label">Descripción de la habilidad:</label>
+									<textarea class="form-control" name="descripcion" id="message-text"
+										text="Descripción" placeholder="Introduce una descripción para tu habilidad"></textarea>
+								</div>
+							</div>
+								
+							<div class="modal-footer">
+								<div>
+									<button type="button" class="btn btn-sm btn-outline-secondary border-0" data-dismiss="modal">Cancelar</button>
+									<button type="button" class="btn btn-sm btn-outline-success border-0" onclick="habilidadForm.submit()" value="añadir">Crear habilidad</button>
+								</div>
+							</div>
+						</form>
+					</div>
+			
+				</div>
+			</div>
+			<!--*************************Fin Modal NUEVA HABILIDAD*******************************-->
+
+			<span class="rounded tx-blanco bgc-bad align-self-center px-2">Admin</span>
+		</div>
+	</div>
+	
+</div>
+
+<div class="container p-4">
+	<table class="table align-middle mb-0 table-hover table-responsive-md">
+		<thead class="tx-off bgc-main-dark">
+			<tr>
+				<th class="text-nowrap">Nombre</th>
+				<th class="text-nowrap">Descripción</th>
+				<th class="text-nowrap">Estado</th>
+				<th class="text-nowrap">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="habilidad:${habilidades}">
+				<td class="align-middle">
+					<div class="d-flex align-items-center">
+						<div class="ms-3">
+							<p th:text="${habilidad.nombre}" class="font-weight-bold mb-1"></p>
+						</div>
+					</div>
+				</td>
+				<td class="align-middle">
+					<p th:text="${habilidad.descripcion}" class="mb-1"></p>
+				</td>
+				<td class="align-middle">
+					<span th:if="${habilidad.requerida.size == 0 && habilidad.conocida.size == 0}" class="badge badge-warning bgc-atencion rounded-pill d-inline">No usada</span>
+					<span th:if="${habilidad.requerida.size != 0 || habilidad.conocida.size != 0}" class="badge badge-success bgc-good rounded-pill d-inline">En uso</span>
+				</td>
+				<td class="d-flex justify-content-center align-middle">
+					<button type="button" class="btn btn-link btn-sm btn-rounded" th:title="|Editar ${habilidad.nombre}|" data-toggle="modal" th:attr="data-target='#editHabilidadModal-'+${habilidad.id}">
+						<i class="bi bi-pencil tx-atencion"></i>
+					</button>
+					<!--***************************Modal EDITAR HABILIDAD*****************************-->
+					<div class="modal fade text-left" th:id="|editHabilidadModal-${habilidad.id}|" tabindex="-1" role="dialog" aria-labelledby="editHabilidadModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title font-weight-bold" id="modalHabilidadLibreLabel" th:text="|Editando ${habilidad.nombre}|"></h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<form name="editHabilidadForm" action="/hability/edit" method="POST" th:id="|editHabilidadForm-${habilidad.id}|">
+									<div class="modal-body">
+					
+										<div class="form-group">
+											<label for="recipient-name" class="col-form-label">Nuevo nombre:</label>
+											<input type="text" class="form-control" name="nombre" id="recipient-name" th:value="${habilidad.nombre}" th:placeholder="${habilidad.nombre}">
+										</div>
+										<div class="form-group">
+											<label for="message-text" class="col-form-label">Nueva descripción:</label>
+											<textarea class="form-control" name="descripcion" id="message-text"
+											th:text="${habilidad.descripcion}" th:placeholder="${habilidad.descripcion}"></textarea>
+										</div>
+									</div>
+										
+									<div class="modal-footer">
+										<div>
+											<button type="button" class="btn btn-sm btn-outline-secondary border-0" data-dismiss="modal">Cancelar</button>
+											<button type="button" class="btn btn-sm btn-outline-success border-0" th:onclick="|document.getElementById('editHabilidadForm-${habilidad.id}').submit()|" value="añadir">Guardar cambios</button>
+										</div>
+									</div>
+									<input type="hidden" name="idHabilidad" th:value="${habilidad.id}"/>
+								</form>
+							</div>
+					
+						</div>
+					</div>
+					<!--***************************Fin Modal EDITAR HABILIDAD*****************************-->
+
+					<a th:href="|#modalEliminarHabilidad-${habilidad.id}|" class="trigger-btn btn btn-link btn-sm btn-rounded" title="Eliminar" data-toggle="modal">
+						<i class="bi bi-trash3 tx-bad"></i>
+					</a>
+
+					<!-- Modal para ELIMINAR HABILIDAD -->
+					<div th:id="|modalEliminarHabilidad-${habilidad.id}|" class="modal fade">
+						<div class="modal-dialog modal-confirm">
+							<div class="modal-content">
+								<div class="modal-header">
+									<div class="icon-box align-self-center tx-bad mr-2">
+										<i class="bi bi-exclamation-octagon"></i>
+									</div>						
+									<h4 th:unless="${habilidad.requerida.size != 0 || habilidad.conocida.size != 0}" class="modal-title w-100">Estás a punto de eliminar una habilidad</h4>
+									<h4 th:if="${habilidad.requerida.size != 0 || habilidad.conocida.size != 0}" class="modal-title w-100">Vas a eliminar una habilidad EN USO</h4>	
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p th:unless="${habilidad.requerida.size != 0 || habilidad.conocida.size != 0}">¿Estás seguro de que quieres eliminar la habilidad <span th:text="${habilidad.nombre}"></span>? Actualmente no se está usando y no causaría problemas.</p>
+									<p th:if="${habilidad.requerida.size != 0 || habilidad.conocida.size != 0}">¿Estás seguro de que quieres eliminar la habilidad <span th:text="${habilidad.nombre}"></span>? Los usuarios o proyectos que la estén usando dejarían de poseerla y podría causar problemas. Quizá prefieras editarla.</p>
+								</div>
+								<div class="modal-footer justify-content-center">
+									<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+									<form class="text-right" action="/hability/delete" method="POST">
+										<input type="hidden" name="idHabilidad" th:value="${habilidad.id}"/>
+										<button type="submit"  class="btn btn-outline-danger btn-sm">
+											<i class="bi bi-radioactive"></i> Sí, eliminar
+										</button>	
+									</form>
+								</div>
+							</div>
+						</div>
+					</div> 
+
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

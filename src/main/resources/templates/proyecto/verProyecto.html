@@ -1,0 +1,338 @@
+<div class="container">
+	
+	<div class="row d-flex justify-content-between mb-4">
+		<div class="col-xl-7 col-lg-6 col-md-12 col-sm-12 col-12">
+			<h1 class="font-weight-light"><th:block th:text="${proyecto.nombre}"></h1>
+		</div>
+		
+		<div class="d-flex justify-content-end align-self-center col-xl-5 col-lg-6 col-md-12 col-sm-12 col-12">
+			<form action="/project/manage" th:if="${proyecto.leader?.id != null && proyecto.leader?.id == session.usuario?.id}">
+				<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+				<button type="submit" class="btn btn-outline-warning btn-sm border-0 mr-2">
+					<i class="bi bi-gear"></i>
+					 Gestionar proyecto
+				</button>
+			</form>
+			<form action="/user/projects">
+				<button type="submit" class="btn btn-outline-info btn-sm border-0" th:unless="${session.usuario == null}">
+					<i class="bi bi-arrow-left"></i>
+					 Mis Proyectos
+				</button>
+			</form>
+		</div>
+	</div>
+	
+</div>
+
+<div class="container p-4">
+	
+	<!--********************* Proyecto SIN LÍDER *********************-->
+	<h5 th:if="${proyecto.leader?.id == null}" class="display-5 list-group-item-danger rounded text-center p-3 mb-4 mx-3" th:text="|La cuenta del líder de ${proyecto.nombre}, no se encuentra activa. Actualmente, el proyecto se da por finalizado.|"></h5>
+	<!--**************************************************************-->
+
+	<!--************** Información general del proyecto **************-->
+	
+	<form action="/proyecto/tuProyecto" method="POST" >
+		<div class="row mb-3 px-3">
+			
+			<div class="col-6">
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="nombreP" class="font-weight-bold">Nombre del proyecto: </label>
+						<input type="text" name="nombre" id="nombreP" class="form-control disabled bg-light border-0" th:value="${proyecto.nombre}" disabled="disabled">
+					</div>
+					<div class="form-group col-md-6" th:unless="${proyecto.leader?.id == null || proyecto.leader?.id == session.usuario?.id}">
+						<label for="nombreLider" class="font-weight-bold">Líder: </label>
+						<div class="d-flex justify-content-left">
+							<a th:if="${session.usuario != null && (pertenece || proyecto.leader.id == session.usuario?.id)}" th:href="|mailto:${proyecto.leader.email}|" th:title="|Enviar mail a ${proyecto.leader.nombre} - ${proyecto.leader.email}|" class="btn btn-link btn-sm btn-rounded tx-main-darker align-self-center">
+								<i class="bi bi-envelope"></i>
+							</a>
+							<img class="imagenNavbar align-self-center" th:src="|/img/profile/${proyecto.leader?.imagen}|" th:alt="${proyecto.leader?.nombre}" th:title="${proyecto.leader?.nombre}">
+							<input type="text" name="nombre" id="nombreLider" class="form-control disabled bg-light border-0" th:value="${proyecto.leader?.nombre}" disabled="disabled">
+						</div>
+					</div>
+					<div class="form-group" th:if="${proyecto.leader?.id != null && proyecto.leader?.id == session.usuario?.id && session.usuario!=null}">
+						<span class="badge badge-pill badge-secondary border-1 pr-2 pl-0 ml-0 py-0">
+							<img th:src="|/img/profile/${proyecto.leader?.imagen}|" height="auto" class="imagenNavbar align-self-center mr-1"> Eres lider
+						</span>
+					</div>
+				</div>
+					
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="inicioP" class="font-weight-bold">Fecha de inicio: </label>
+						<input type="date" name="fIni" id="InicioP" class="form-control disabled bg-light border-0" th:value="${proyecto.inicio}" disabled="disabled">
+					</div>
+					<div class="form-group col-md-6">
+						<label for="finP" class="font-weight-bold">Fecha de fin: </label>
+						<input type="date" name="fFin" id="finP" class="form-control disabled bg-light border-0" th:value="${proyecto.fin}" disabled="disabled">
+					</div>
+				</div>
+			</div>
+				
+			<div class="col-6">
+				<div class="form-group">
+					<label for="descripcionP" class="font-weight-bold">Descripción del proyecto: </label>
+					<textarea id="textareaVerProyecto" th:text="${proyecto.descripcion}" name="descripcion" class="form-control disabled bg-light border-0" rows="3" disabled="disabled"></textarea>
+					<!--<input type="text" name="descripcion" id="descripcionP" class="form-control hiddenInputProyecto" th:value="${proyecto.descripcion}">-->
+				</div>
+			</div>
+			
+		</div>
+	</form>	
+	<!--**************************************************************-->
+
+	<!--************** Puesto propio en el proyecto **************-->
+	<div class="row mt-5" th:unless="${libres == 0 && ocupados == 0 && proyecto.leader?.id == null}" th:if="${session.usuario!=null && pertenece}">
+		<div class="col">
+			<div class="">
+				<div>
+					<h3 class="font-weight-light ml-3" th:text="|Tu puesto en ${proyecto.nombre}|"></h3> 
+				</div>
+			</div>
+			<hr class="mb-4">
+		
+			<th:block th:each="puesto : ${proyecto.puestos}">
+				<div th:if="${puesto.ocupante != null && puesto.ocupante.id == session.usuario?.id}" class="mx-3 mb-3">
+					
+					<div  class="card escalar text-center my-3 mx-3">
+		  				<div class="card-body">
+							
+							<h5 class="card-title text-left font-weight-bold" th:text="${puesto.nombre}"></h5>
+						    <p class="card-text" th:text="${puesto.descripcion}"></p>
+		  				</div>
+						<div class="d-inline text-right pb-2 px-2">
+						    <span th:each="habilidad : ${puesto.requiere}" th:text="${habilidad.nombre}" class="badge badge-pill badge-primary mx-1"></span>
+						</div>
+					</div>
+
+					<div class="mx-3 mb-3 d-flex justify-content-end">
+						<a href="#modalAbandonarPuesto" class="trigger-btn btn btn-outline-danger btn-sm border-0" data-toggle="modal">
+							<i class="bi bi-x-square"></i> Abandonar
+						</a>
+					</div>
+
+					<!-- Modal para ABANDONAR PUESTO -->
+					<div id="modalAbandonarPuesto" class="modal fade">
+						<div class="modal-dialog modal-confirm">
+							<div class="modal-content">
+								<div class="modal-header">
+									<div class="icon-box align-self-center tx-bad mr-2">
+										<i class="bi bi-exclamation-octagon"></i>
+									</div>						
+									<h4 class="modal-title w-100">Estás a punto de abandonar el proyecto</h4>	
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p>¿Quieres abandonar tu puesto de <span th:text="${puesto.nombre}"></span>? Dejarás de formar parte de <span th:text="${proyecto.nombre}"></span> y ya no podrás contactar con tus compañeros.</p>
+								</div>
+								<div class="modal-footer justify-content-center">
+									<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+									<form class="text-right" action="/project/user/exit" method="POST">
+										<input type="hidden" name="idPuesto" th:value="${puesto.id}"/>
+										<button type="submit"  class="btn btn-outline-danger btn-sm">
+											<i class="bi bi-radioactive"></i> Sí, abandonar
+										</button>	
+									</form>
+								</div>
+							</div>
+						</div>
+					</div> 
+					
+				</div>
+			</th:block>
+			
+		</div>
+	</div>
+	<!--**************************************************************-->
+	
+		
+	<!--**************NINGÚN PUESTO CREADO*********************-->
+	<div class="row py-3" th:if="${libres == 0 and ocupados == 0}">
+		<div class="container px-lg-5">
+	    	<div class="jumbotron p-3 p-lg-3 text-center sinPuestos">
+	            <div class="m-3 m-lg-4">
+	                <h1 th:if="${proyecto.leader?.id != null and !proyecto.isEnded()}" class="display-5 fw-bold" th:text="|${proyecto.nombre} no ha publicado aún ningún puesto.|"></h1>
+					<h1 th:if="${proyecto.isEnded()}" class="display-5 fw-bold" th:text="|${proyecto.nombre} fue cerrado sin puestos creados.|"></h1>
+	                <p th:if="${proyecto.leader?.id != null}" class="lead">Vuelve a pasar de vez en cuando por aquí en busca de nuevas oportunidades. Nunca se sabe donde podría estar tu sitio <i class="bi bi-emoji-laughing"></i></p>
+					<p th:if="${proyecto.leader?.id == null}" class="lead">Si vas en busca de nuevas oportunidades, no dudes en consultar el resto de proyectos activos <i class="bi bi-emoji-laughing"></i></p>
+					<div class="d-flex justify-content-center">
+		                <a class="btn btn-info m-3 col-4" href="/">Volver a la vista de proyectos</a>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!--*******************************************************-->
+
+
+	<!--****************************************** TODOS los puestos - SÓLO SIN LIDER ******************************************-->
+
+	<th:block th:unless="${libres == 0 and ocupados == 0}" th:if="${proyecto.leader == null}" >
+		<div class="row mt-5">
+			<div>
+				<h3 class="font-weight-light ml-3" th:text="|Los puestos de ${proyecto.nombre}|"></h3> 
+			</div>
+		</div>
+		<hr class="mb-4">
+
+		<div class="row">
+			<th:block th:each="puesto : ${proyecto.puestos}">
+				<div th:if="${session.usuario == null or puesto.ocupante?.id != session.usuario?.id}" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+					<div class="card escalar text-center my-3 mx-3">
+						<div class="card-body">
+							<img th:if="${puesto.ocupante != null and session.usuario != null}" class="imagenNavbar float-right" th:src="|/img/profile/${puesto.ocupante.imagen}|" th:alt="${puesto.ocupante.nombre}" th:title="${puesto.ocupante.nombre}">
+							<h5 class="card-title text-left font-weight-bold" th:text="${puesto.nombre}"></h5>
+							
+							<p class="card-text text-left" th:if="${puesto.ocupante != null and pertenece}" th:text="|${puesto.ocupante?.nombre} ${puesto.ocupante?.apellido1} ${puesto.ocupante?.apellido2}|"></p>
+							<p class="card-text" th:text="${puesto.descripcion}"></p>
+						</div>
+						<div class="d-inline text-right pb-2 px-2">
+							<span th:each="habilidad : ${puesto.requiere}" th:text="${habilidad.nombre}" class="badge badge-pill badge-primary mx-1"></span>
+						</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+	</th:block>
+	<!--***********************************************************************************************************-->
+	
+	
+	<div class="row">
+	
+		<!--****************************************** Cards puestos ocupados ******************************************-->
+		<div th:if="${proyecto.leader != null and !ocupadoUnicoLibre}" th:unless="${libres == 0 and ocupados == 0}" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+			<div class="">
+				<div>
+					<h3 class="font-weight-light pl-3">Los puestos ocupados:</h3> 
+				</div>
+			</div>
+			<hr class="mb-4">
+		
+			<div class="mx-3 mb-3">
+				
+				<!-- Mensaje mostrado al no haber puestos ocupados en el equipo -->
+				<h5 th:if="${ocupados == 0 && libres > 0}" class="display-5 list-group-item-warning rounded text-center p-3 mt-5" th:text="|No hay ningún puesto ocupado en este momento para ${proyecto.nombre}|"></h5>
+				<!--************************************************************-->
+				
+				<th:block th:if="${ocupados > 0}" th:each="puesto : ${proyecto.puestos}" class="mx-3">
+					<div th:if="${puesto.ocupante != null && puesto.ocupante.id != session.usuario?.id}" class="card escalar text-center my-3 mx-3">
+		  				<div class="card-body">
+							<div class="float-right m-0 p-0">
+								<a th:if="${session.usuario != null && (pertenece || proyecto.leader.id == session.usuario?.id)}" th:href="|mailto:${puesto.ocupante.email}|" th:title="|Enviar mail a ${puesto.ocupante.nombre} - ${puesto.ocupante.email}|" class="btn btn-link btn-sm btn-rounded tx-main-darker">
+									<i class="bi bi-envelope"></i>
+								</a>
+								<img class="imagenNavbar float-right" th:src="|/img/profile/${puesto.ocupante.imagen}|" th:alt="${puesto.ocupante.nombre}" th:title="${puesto.ocupante.nombre}">
+							</div>
+							
+							<h5 class="card-title text-left font-weight-bold" th:text="${puesto.nombre}"></h5>
+							
+							<p class="card-text text-left" th:if="${session.usuario != null && (pertenece || proyecto.leader.id == session.usuario?.id)}" th:text="|${puesto.ocupante.nombre} ${puesto.ocupante.apellido1} ${puesto.ocupante.apellido2}|"></p>
+						    <p class="card-text" th:text="${puesto.descripcion}"></p>
+		  				</div>
+						<div class="d-inline text-right pb-2 px-2">
+						    <span th:each="habilidad : ${puesto.requiere}" th:text="${habilidad.nombre}" class="badge badge-pill badge-primary mx-1"></span>
+						</div>
+					</div>
+				</th:block>
+			</div>
+		</div>
+		<!--***********************************************************************************************************-->
+		
+		<!--****************************************** Cards puestos libres ******************************************-->
+		<div th:if="${proyecto.leader != null}" th:unless="${libres == 0 && ocupados == 0}" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+			<div>
+				<h3 class="font-weight-light pl-3">Los puestos libres:</h3> 
+			</div>
+			<hr class="mb-4">
+		
+			<div class="mx-3 mb-3">
+			
+				<!-- Mensaje mostrado al no haber puestos ocupados en el equipo -->
+				<h5 th:if="${ocupados > 0 && libres == 0}" class="display-5 list-group-item-warning rounded text-center p-3 mt-5" th:text="|Ahora mismo no hay ningún puesto libre para ${proyecto.nombre}.|"></h5>
+				<!--************************************************************-->
+				
+				<!--************** Cards puestos libres **************-->
+				
+				<th:block th:if="${libres > 0}" th:each="puesto : ${proyecto.puestos}" class="mx-3" id="bloquePuestosLibres">
+					<div th:if="${puesto.ocupante == null}" class="card escalar text-center my-3 mx-3">
+						<div class="card-body">
+						    <h5 th:text="${puesto.nombre}" class="card-title text-left font-weight-bold"></h5>
+						    <p th:text="${puesto.descripcion}" class="card-text"></p>
+						    <div class="d-inline justify-content-end pb-2 px-2">
+							    <span th:each="habilidad : ${puesto.requiere}" th:text="${habilidad.nombre}" class="badge badge-pill badge-primary mx-1"></span>
+							</div>
+					    	<div class="d-flex justify-content-end">
+								<a th:if="${puesto.ocupante==null and !pertenece and session.usuario!=null and proyecto.leader.id != session.usuario.id and !proyecto.isEnded()}" 
+									th:href="|#modalUnirseAPuesto-${puesto.id}|" 
+									class="trigger-btn btn btn-outline-primary btn-sm border-0" data-toggle="modal"
+									onclick="escalarOff();">
+									<i class="bi bi-person-check mr-2"></i> Unirme
+								</a>
+							</div>
+							
+
+							<!-- Modal para UNIRSE a PUESTO -->
+							<div th:id="|modalUnirseAPuesto-${puesto.id}|" class="modal fade modalUnir">
+								<div class="modal-dialog modal-confirm">
+									<div class="modal-content">
+										<div class="modal-header">
+											<div class="icon-box align-self-center tx-bad mr-2">
+												<i class="bi bi-exclamation-octagon"></i>
+											</div>						
+											<h4 class="modal-title w-100">Estás a punto de unirte al proyecto</h4>	
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<p>¿Quieres unirte al proyecto ocupando el puesto de <span th:text="${puesto.nombre}"></span>? Pasarás a formar parte de <span th:text="${proyecto.nombre}"></span> y podrás contactar con el resto de miembros.</p>
+										</div>
+										<div class="modal-footer justify-content-center">
+											<button type="button" class="btn btn-outline-info btn-sm mr-3" data-dismiss="modal">No, cancelar</button>
+											<form class="text-right" action="/project/user/join" method="POST">
+												<input type="hidden" name="idPuesto" th:value="${puesto.id}"/>
+												<input type="hidden" name="idProyecto" th:value="${proyecto.id}"/>
+												<button type="submit"  class="btn btn-outline-success btn-sm">
+													<i class="bi bi-person-check mr-2"></i> Sí, unirme
+												</button>	
+											</form>
+										</div>
+									</div>
+								</div>
+							</div> 
+						</div>
+					</div>
+				</th:block>
+			</div>
+		</div>
+		<!--***********************************************************************************************************-->
+		
+	</div>
+	
+	
+	
+</div>
+
+<script>
+	//Desactivar el scale de las cards para que no entre en conflicto con los modals
+	//al pulsar el botón de unirse
+	function escalarOff() {
+		$(".escalar").each(function() {
+			$(this).addClass("escalarOff").removeClass("escalar");
+		})
+	}
+
+	//Reactivar el scale de las cards al salir del modal
+	$(".modalUnir").on("hidden.bs.modal", function() {
+		console.log("Salir del modal")
+		$(".escalarOff").each(function() {
+			$(this).addClass("escalar").removeClass("escalarOff");
+		})
+	})
+		
+	
+</script>
+<script src="/js/edicionGestionProyectos.js"></script>

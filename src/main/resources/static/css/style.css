@@ -1,0 +1,479 @@
+:root {
+    --blanco: #fff;
+    --off: #F8F8FB;
+    --gris: #B8CCD4;
+    --negro: #343A40;
+    --main-light: #97dce4;
+    --main: #00AFC1;
+    --main-dark: #007582;
+    --main-darker: #00474F;
+    --main-darkest: #002e33;
+    --atencion: #FFD124;
+    --enfasis: #C21372;
+    --enfasis-light: #ffbbe0;
+    --enfasis-lighter: #f3e3ec;
+
+    --success: #1eb690;
+    --danger: #dc3567;
+}
+
+/*----------------------BODY---------------------
+------------------------------------------------*/
+html, body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--off);
+}
+::-moz-selection { /* Code for Firefox */
+  color: #f8f8fb;
+  background: #30A0BA;
+}
+
+::selection {
+  color: #f8f8fb;
+  background: #30A0BA;
+}
+
+/*--------------------SCROLLBAR-------------------
+------------------------------------------------*/
+/* Para webkit */
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(196, 224, 223, 0); 
+  border-radius: 12px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--main); 
+  border-radius: 12px;
+  border: 2px solid var(--off);
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--main-dark); 
+}
+/* Handle on active */
+::-webkit-scrollbar-thumb:active {
+  border: 1px solid var(--bg-main);
+}
+/* Para firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: SteelBlue LightBlue;
+}
+
+/*----------------------NAV----------------------
+------------------------------------------------*/
+.logoNavbar {
+	height: 30px;
+    transition-duration: 0.4s;
+}
+.logoNavbar:hover {
+    transform: rotate(7deg) scale(1.2);
+    transition-duration: 0.4s;
+}
+.dropdown-menu {
+    width: 250px !important;
+}
+.oculto {
+    display: none;
+}
+.navbarDropdownMenuLink{
+	position: absolute;
+}
+.enlacePerfilUsuario :hover{
+	color: white;
+}
+.navbar
+
+/*Botón Crear Proyecto*/
+.wrapper .button {
+	text-decoration: none;
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    float: left;
+    margin: 0 15px;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.5s ease-out;
+}
+.wrapper .button:hover {
+    width: 155px;
+    transition-duration: 0.3s;
+}
+.wrapper .button .icon {
+    color: var(--main);
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    border-radius: 50px;
+    box-sizing: border-box;
+    line-height: 30px;
+}
+.wrapper .button:hover .icon {
+    background: var(--main);
+    transition: all 0.3s ease-out;
+}
+.wrapper .button .icon i {
+    font-size: 15px;
+    line-height: 30px;
+    transition: all 0.6s ease-out;
+}
+.wrapper .button:hover .icon i {
+    color: #fff;
+}
+.wrapper .button span {
+	color: var(--main-dark);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 30px;
+    margin-left: 7px;
+}
+/*FIN Botón Crear Proyecto*/
+
+/*-------------------User Menu-------------------
+------------------------------------------------*/
+.imagenNavbar {
+	width: 30px;
+	height: 30px;
+	object-fit: cover;
+	border-radius: 50%;
+	object-position: center center;
+    transition: all 0.4 ease-in;
+}
+.imgPerfilMenu {
+    height: 64px;
+    width: 64px;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 50%;
+    transition: all 0.4s ease-in-out;
+}
+.imgPerfil {
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
+	object-position: center center;
+}
+.imgUsersView {
+    width: 45px;
+	height: 45px;
+	object-fit: cover;
+	object-position: center center;
+}
+.textoPerfilusuario {
+    color: #f8f8fb;
+}
+.enlacePerfilUsuario {
+    transition: all 0.4s ease-in-out;
+}
+.enlacePerfilUsuario:hover .imgPerfilMenu {
+    box-shadow: #f8f8fb 0px 0px 16px, #f8f8fb 0px 0px 12px, #f8f8fb 0px 0px 8px, #f8f8fb 0px 0px 4px, #f8f8fb 0px 0px 2px, #f8f8fb 0px 0px 1px, #f8f8fb 0px 0px 4px, #f8f8fb 0px 0px 2px, #f8f8fb 0px 0px 1px;
+}
+.enlacePerfilUsuario:hover .textoPerfilUsuario {
+    color: #fff;
+}
+
+
+/*-----------------MENU LOGIN---------------------
+------------------------------------------------*/
+.texto-login {
+    color: var(--main-light);
+}
+.menuLogin {
+    background: linear-gradient(-45deg, var(--main), var(--main-dark), var(--main-light), var(--negro));
+	background-size: 400% 400%;
+	animation: gradient 25s ease-in-out infinite;
+}
+.botonLogin {
+    background: linear-gradient(-45deg, var(--main), var(--main-dark), var(--main-light), var(--negro));
+	background-size: 600% 600%;
+	animation: gradient-inverse 25s ease-in-out infinite;
+}
+@keyframes gradient {
+	0% {
+		background-position: 100% 50%;
+	}
+	50% {
+		background-position: 0% 50%;
+	}
+	100% {
+		background-position: 100% 50%;
+	}
+}
+@keyframes gradient-inverse {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/*----------------Vista LOGIN--------------------
+------------------------------------------------*/
+.imgVistaLogin {
+    height: 140px;
+}
+div.vistaLogin {
+    border-radius: 2rem;
+}
+.card.escalar.vistaLogin:hover{
+	/*-ms-transform: scale(1.01);
+	-webkit-transform: scale(1.01); */
+	transform: translate(-6px, -5px);
+	-webkit-box-shadow: -6px 5px 0px 0px var(--atencion); 
+	box-shadow: 6px 5px 0px 0px var(--atencion);
+    transition-duration: 150ms;
+}
+
+/*--------------------HOME------------------------
+------------------------------------------------*/
+.logoHome {
+    height: 150px;
+    transition-duration: 0.6s;
+}
+.logoHome:hover {
+	transform: rotate(10deg) scale(1.1);
+    transition-duration: 0.4s;
+}
+.search-box {
+    transition: width 0.6s, border-radius 0.6s, background 0.6s, box-shadow 0.6s;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: var(--gris);
+}
+/* *** Barra de búsqueda *** */
+.search-box+label .search-icon {
+    color: var(--blanco);
+}
+.search-box:hover {
+    color: var(--atencion);
+    background: var(--main);
+    box-shadow: 0 0 0 5px var(--main-darker);
+}
+.search-box:hover+label .search-icon {
+    color: var(--atencion);
+}
+.search-box:focus {
+    transition: width 0.6s cubic-bezier(0, 1.22, 0.66, 1.39), border-radius 0.6s, background 0.6s;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding-left: 15px;
+    cursor: text;
+    width: 300px;
+    border-radius: auto;
+    background: var(--main-light);
+    color: var(--blanco);
+}
+.search-box:focus+label .search-icon {
+    color: var(--main-darker);
+}
+.search-box:not(:focus) {
+    text-indent: -5000px;
+}
+#search-submit {
+    position: relative;
+    left: -5000px;
+}
+.search-icon {
+    position: relative;
+    left: -30px;
+    color: white;
+    cursor: pointer;
+}
+/* *** Carrusel *** */
+.carousel {
+    position: relative;
+}
+.carousel-caption {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px 10px;
+}
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+/*----------------Verificación--------------------
+------------------------------------------------*/
+input.inputCodigoVerificacion {
+    color: var(--main-dark);
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 5px;
+}
+
+/*--------------------Registro--------------------
+------------------------------------------------*/
+.imagenSubida {
+	width: 128px;
+	height: 128px;
+	object-fit: cover;
+	object-position: center center;
+}
+
+/*-------------------Proyectos-------------------
+------------------------------------------------*/
+.card.escalar {
+    transition-duration: 300ms;
+}
+.card.escalar:hover{
+	/*-ms-transform: scale(1.01);
+	-webkit-transform: scale(1.01); */
+	transform: translate(-6px, -5px);
+	-webkit-box-shadow: -6px 5px 0px 0px var(--main-dark); 
+	box-shadow: 6px 5px 0px 0px var(--main-dark);
+    transition-duration: 150ms;
+}
+.sinPuestos {
+	background-color:#F9F997;
+}
+.proyectoFinalizado {
+    background-color: var(--enfasis-light);
+    transition-duration: 300ms;
+}
+.proyectoFinalizado:hover{
+	/*-ms-transform: scale(1.01);
+	-webkit-transform: scale(1.01); */
+	transform: translate(-6px, -5px);
+	-webkit-box-shadow: -6px 5px 0px 0px var(--enfasis); 
+	box-shadow: 6px 5px 0px 0px var(--enfasis);
+    transition-duration: 150ms;
+}
+
+
+/*---------------Gestion Proyectos---------------
+------------------------------------------------*/
+.hiddenElementProyecto {
+	display: none;
+}
+.card-columns {
+	@include media-breakpoint-only(sm) {
+    	column-count: 1;
+  	}
+	@include media-breakpoint-only(md) {
+    	column-count: 2;
+  	}
+  	@include media-breakpoint-only(lg) {
+    	column-count: 3;
+  	}
+  	@include media-breakpoint-only(xl) {
+    	column-count: 4;
+  	}
+}
+
+/*-----------------Mis proyectos----------------
+------------------------------------------------*/
+.cartaJumbo {
+	background-color: #E7D0FA;
+}
+.cartaJumboPropios {
+	background-color: var(--gris);
+}
+
+/*-----------------Ver Proyecto-----------------
+------------------------------------------------*/
+#textareaVerProyecto {
+    resize: none;
+}
+
+/*-------------------Team View-------------------
+------------------------------------------------*/
+.team {
+	color: #8d97ad;
+  	font-weight: 300;
+}
+.team h1, .team h2, .team h3, .team h4, .team h5, .team h6 {
+  	color: #3e4555;
+}
+.team .font-weight-medium {
+	font-weight: 500;
+}
+.teamPic{
+	height: 320px;
+	width: 320px;
+    transition-duration: 0.6s;
+}
+.teamPic:hover {
+    -moz-transform: scale(1.1,1.1);
+    -webkit-transform: scale(1.1,1.1);
+    -o-transform: scale(1.1,1.1);
+    -ms-transform: scale(1.1,1.1);
+    transition-duration: 0.4s;
+}  
+.team h5 {
+    line-height: 22px;
+    font-size: 18px;
+}
+.team .subtitle {
+    color: #8d97ad;
+    line-height: 24px;
+	font-size: 13px;
+}
+.team ul li a {
+	color: #8d97ad;
+	padding-right: 15px;
+	-webkit-transition: 0.1s ease-in;
+	-o-transition: 0.1s ease-in;
+	transition: 0.1s ease-in;
+}
+.team ul li a:hover {
+	-webkit-transform: translate3d(0px, -5px, 0px);
+	transform: translate3d(0px, -5px, 0px);
+	color: #316ce8;
+}
+img.logoTeam {
+	height: 120px;
+    transition-duration: 1.4s;
+}
+img.logoTeam:hover {
+    transform: scale(1.3);
+    transition-duration: 0.4s;
+}
+
+
+/*-----------------About View-----------------
+------------------------------------------------*/
+.logoAbout {
+	height: 220px;
+    transition-duration: 0.6s;
+}
+.logoAbout:hover {
+	transform: rotate(10deg) scale(1.1);
+    transition-duration: 0.4s;
+}
+
+
+/*-------------------Footer-------------------
+------------------------------------------------*/
+.logoFooter {
+	height: 24px;
+    transition-duration: 0.8s;
+}
+a.enlaceIconoFooter:hover .logoFooter {
+    transform: rotate(10deg) scale(1.1);
+    transition-duration: 0.4s;
+}
+
+/*-------------------Utilities-------------------
+------------------------------------------------*/
+.modal.fade {
+    background: transparent;
+    backdrop-filter: blur(3px);
+}

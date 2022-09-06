@@ -1,0 +1,13 @@
+<div class="container">
+	<div class="mt-5 mb-4">
+		<h4 th:class="|alert alert-${severity}|">
+			<span th:text="${mensaje}"></span>
+		</h4>
+	</div>
+	
+	<div class="d-flex justify-content-end">
+		<form th:action="${link}" method="get">
+			<input class="btn btn-info pull-right" type="submit" value="Volver" autofocus="autofocus">
+		</form>
+	</div>
+</div>
